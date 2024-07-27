@@ -38,7 +38,7 @@ class GameManager {
                 }
                 if (game) {
                     console.log("started 2");
-                    game.makeMove(socket, message.move);
+                    game.makeMove(socket, message.payload.move);
                 }
             }
         });
