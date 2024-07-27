@@ -10,25 +10,29 @@ class Game {
         this.board = new chess_js_1.Chess();
         this.moves = [];
         this.startTime = new Date();
+        this.moveCount = 0;
         this.player1.send(JSON.stringify({
             type: messages_1.INIT_GAME,
             payload: {
-                color: "white"
-            }
+                color: "white",
+            },
         }));
         this.player2.send(JSON.stringify({
             type: messages_1.INIT_GAME,
             payload: {
-                color: "black"
-            }
+                color: "black",
+            },
         }));
     }
     makeMove(socket, move) {
         console.log("started 3");
-        if (this.board.moves.length % 2 === 0 && socket !== this.player1) {
+        if (this.moveCount % 2 === 0 && socket !== this.player1) {
+            console.log("early return 1");
+            console.log(this.board.moveNumber());
             return;
         }
-        if (this.board.moves.length % 2 === 1 && socket !== this.player2) {
+        if (this.moveCount % 2 === 1 && socket !== this.player2) {
+            console.log("early return 2");
             return;
         }
         try {
@@ -39,31 +43,31 @@ class Game {
             return;
         }
         console.log("started 4");
-        console.log(this.board.moves.length);
         if (this.board.isGameOver()) {
-            this.player1.emit(JSON.stringify({
+            this.player1.send(JSON.stringify({
                 type: messages_1.GAME_OVER,
-                winner: this.board.turn() === "w" ? "black" : "white"
+                winner: this.board.turn() === "w" ? "black" : "white",
             }));
-            this.player2.emit(JSON.stringify({
+            this.player2.send(JSON.stringify({
                 type: messages_1.GAME_OVER,
-                winner: this.board.turn() === "w" ? "black" : "white"
+                winner: this.board.turn() === "w" ? "black" : "white",
             }));
             return;
         }
-        if (this.board.moves.length % 2 === 0) {
+        if (this.moveCount % 2 === 0) {
             this.player2.send(JSON.stringify({
                 type: messages_1.MOVE,
-                payload: move
+                payload: move,
             }));
         }
         else {
             this.player1.send(JSON.stringify({
                 type: messages_1.MOVE,
-                payload: move
+                payload: move,
             }));
         }
-        console.log(this.board.moves.length);
+        this.moveCount++;
+        console.log(this.moveCount);
     }
 }
 exports.Game = Game;
