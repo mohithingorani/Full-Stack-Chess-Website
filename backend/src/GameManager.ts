@@ -41,11 +41,14 @@ export class GameManager {
             }
 
             if(message.type === MOVE){
-                const game = this.games.find(game => {
-                    game.player1 === socket || game.player2 === socket;
-                })
+                console.log("started 1");
+                const game = this.games.find(game => game.player1 === socket || game.player2 === socket);
+                if(!game){
+                    console.log("no game");
+                }
                 if(game){
-                    
+                    console.log("started 2");
+                    game.makeMove(socket,message.move);
                 }
             }
         })
