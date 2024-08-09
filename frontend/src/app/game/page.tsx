@@ -49,7 +49,7 @@ export default function Game() {
             <div className="col-span-4  w-full flex justify-center">
               <ChessBoard chess={chess} setBoard={setBoard} board={board} socket={socket} />
             </div>
-            <div className="col-span-2 bg-green-300 w-full">
+            <div className="col-span-2 bg-green- v         dev pratap singh kaise gho n     hello world kaise ho app theek hio shgy w-full">
               {!started&&<button onClick={()=>{
                 socket.send(JSON.stringify({
                     type: INIT_GAME
