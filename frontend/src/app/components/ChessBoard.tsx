@@ -18,13 +18,19 @@ export const ChessBoard = ({
     type: PieceSymbol;
     color: Color;
   } | null)[][];
-
   socket: WebSocket;
   setBoard: any;
   chess: any;
 }) => {
   const [from, setFrom] = useState<string | null>(null);
   const [to, setTo] = useState<string | null>(null);
+
+  const getPieceImage = (square: { type: PieceSymbol; color: Color } | null) => {
+  if (!square) return null;
+  
+  const colorPrefix = square.color === "b" ? "b" : "w";
+  return `/pieces/${colorPrefix}${square.type}.png`;
+};
 
   const handleSquareClick = (rowIndex: number, columnIndex: number) => {
     const squareNotation = toChessNotation(rowIndex, columnIndex);
@@ -38,10 +44,10 @@ export const ChessBoard = ({
           JSON.stringify({
             type: "move",
             payload: {
-                move: {
-                    from,
-                    to : toSquare
-                },
+              move: {
+                from,
+                to: toSquare
+              },
             },
           })
         );
@@ -51,27 +57,22 @@ export const ChessBoard = ({
         });
         setFrom(null);
         setTo(null);
-        try{
-            chess.move({
-                from,
-                to: toSquare,
-              });
-              setBoard(chess.board());
-        }catch(e){
-            console.log(e);
-            alert("invalid move")
+        try {
+          chess.move({
+            from,
+            to: toSquare,
+          });
+          setBoard(chess.board());
+        } catch(e) {
+          console.log(e);
+          alert("invalid move")
         }
-        
       }
     }
   };
 
   return (
     <div className="text-white-200">
-      {JSON.stringify({
-        from,
-        to,
-      })}
       {board.map((row, rowIndex) => (
         <div key={rowIndex} className="flex">
           {row.map((square, columnIndex) => (
@@ -84,7 +85,13 @@ export const ChessBoard = ({
                   : "bg-[#EBECD0]"
               }`}
             >
-              {square?<img className="w-full p-3" src={`/${square?.color === "b"?square?.type:`${square?.type.toUpperCase()} copy`}.png`}/>:null}
+              {square && (
+                <img 
+                  className="w-full p-3" 
+                  src={getPieceImage(square)!}
+                  alt={`${square.color} ${square.type}`}
+                />
+              )}
             </div>
           ))}
         </div>
